@@ -1,0 +1,262 @@
+/* ═══════════════════════════════════════════════════════════
+   SHEHRAZ RIAR — HERO ONLY
+   Light background, black text, editorial serif, 
+   full-screen ASCII video bg in grey-white
+   ═══════════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #ffffff;
+  --text: #0a0a0a;
+  --text-secondary: #555555;
+  --white: #ffffff;
+
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+
+  --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — full viewport, single screen
+   ═══════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ─── ASCII video: full-screen background ─── */
+.hero__ascii-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  filter: invert(1);
+  opacity: 0.55;
+}
+
+/* Heartbeat rhythm — CSS layer (opacity + brightness pulse) */
+.hero__ascii-bg--heartbeat {
+  animation: heartbeatPulse 1.6s ease-in-out infinite;
+}
+
+/* Subtle vignette that breathes with the heartbeat */
+.hero__ascii-bg--heartbeat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 70% at 50% 50%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+  animation: vignettePulse 1.6s ease-in-out infinite;
+}
+
+/* ─── Top nav ─── */
+.hero__nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2.5rem;
+  opacity: 0;
+  animation: fadeIn 1s 0.3s ease forwards;
+}
+
+.hero__logo {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.hero__nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.hero__nav-link {
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition);
+  padding: 0;
+}
+
+.hero__nav-link:hover {
+  color: var(--text);
+}
+
+.hero__nav-link--active {
+  color: var(--text);
+}
+
+/* ─── Bottom: name + descriptor ─── */
+.hero__bottom {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 2.5rem 2.5rem;
+  gap: 2rem;
+}
+
+.hero__name {
+  font-family: var(--font);
+  font-size: clamp(5rem, 14vw, 14rem);
+  font-weight: 900;
+  font-style: normal;
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-transform: lowercase;
+  opacity: 0;
+  animation: revealName 1.2s 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero__descriptor {
+  position: relative;
+  z-index: 10;
+  max-width: 260px;
+  text-align: right;
+  padding-bottom: 0.6em;
+  opacity: 0;
+  animation: slideUp 1s 1s ease forwards;
+  flex-shrink: 0;
+}
+
+/* Soft white clearing behind the descriptor so ASCII never obscures it */
+.hero__descriptor::before {
+  content: '';
+  position: absolute;
+  inset: -2rem -2.5rem;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at 70% 60%,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.75) 40%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  pointer-events: none;
+}
+
+.hero__descriptor p {
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .hero__nav { padding: 1.5rem; }
+  .hero__nav-links { display: none; }
+
+  .hero__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .hero__name {
+    font-size: clamp(3.5rem, 18vw, 8rem);
+  }
+
+  .hero__descriptor {
+    text-align: left;
+    max-width: 100%;
+    padding-bottom: 0;
+  }
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes revealName {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Heartbeat rhythm keyframes ─── */
+
+/*
+  Cardiac cycle at ~38 bpm (1.6s period — deep rest):
+  
+  0%   = start of cycle, resting
+  6%   = S1 peak ("lub") — strong systolic contraction
+  15%  = S1 falloff
+  28%  = S2 peak ("dub") — aortic/pulmonic valve closure
+  38%  = S2 falloff
+  100% = diastolic rest → next cycle
+*/
+@keyframes heartbeatPulse {
+  0%   { opacity: 0.55; filter: invert(1) brightness(1); }
+  6%   { opacity: 0.78; filter: invert(1) brightness(1.35); }
+  15%  { opacity: 0.55; filter: invert(1) brightness(1); }
+  28%  { opacity: 0.68; filter: invert(1) brightness(1.2); }
+  38%  { opacity: 0.55; filter: invert(1) brightness(1); }
+  100% { opacity: 0.55; filter: invert(1) brightness(1); }
+}
+
+@keyframes vignettePulse {
+  0%   { opacity: 0.3; }
+  6%   { opacity: 0.05; }
+  15%  { opacity: 0.3; }
+  28%  { opacity: 0.15; }
+  38%  { opacity: 0.3; }
+  100% { opacity: 0.3; }
+}
+
