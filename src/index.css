@@ -66,13 +66,14 @@ body {
   opacity: 0.55;
 }
 
-/* Heartbeat rhythm — CSS layer (opacity + brightness pulse) */
-.hero__ascii-bg--heartbeat {
-  animation: heartbeatPulse 1.6s ease-in-out infinite;
-}
+/*
+  Heartbeat rhythm is handled ONLY by the JS brightnessRaw prop,
+  which modulates individual ASCII character brightness in a lub-dub pattern.
+  NO CSS opacity animation — that was causing the ugly whole-screen flash.
+*/
 
-/* Subtle vignette that breathes with the heartbeat */
-.hero__ascii-bg--heartbeat::after {
+/* Static vignette for cinematic depth */
+.hero__ascii-bg::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -81,9 +82,8 @@ body {
   background: radial-gradient(
     ellipse 70% 70% at 50% 50%,
     transparent 40%,
-    rgba(0, 0, 0, 0.12) 100%
+    rgba(0, 0, 0, 0.08) 100%
   );
-  animation: vignettePulse 1.6s ease-in-out infinite;
 }
 
 /* ─── Top nav ─── */
@@ -163,7 +163,8 @@ body {
   z-index: 10;
   max-width: 260px;
   text-align: right;
-  padding-bottom: 0.6em;
+  /* Align the bottom of descriptor text with the baseline of "riar." */
+  padding-bottom: 0.15em;
   opacity: 0;
   animation: slideUp 1s 1s ease forwards;
   flex-shrink: 0;
@@ -196,16 +197,13 @@ body {
 @media (max-width: 768px) {
   .hero {
     height: 100dvh;
-    grid-template-rows: auto 0.3fr auto; /* shrink the dead-space spacer */
+    height: 100vh; /* fallback */
+    grid-template-rows: auto 1fr auto;
   }
 
-  /* Boost ASCII visibility on mobile — the faint desktop look gets lost on small screens */
+  /* Boost ASCII on mobile */
   .hero__ascii-bg {
-    opacity: 0.8;
-  }
-
-  .hero__ascii-bg--heartbeat {
-    animation: heartbeatPulseMobile 1.6s ease-in-out infinite;
+    opacity: 0.75;
   }
 
   .hero__nav {
@@ -224,8 +222,8 @@ body {
   .hero__bottom {
     flex-direction: column;
     align-items: flex-start;
-    padding: 0 1.25rem calc(2rem + env(safe-area-inset-bottom, 0px));
-    gap: 1.25rem;
+    padding: 0 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    gap: 1rem;
   }
 
   .hero__name {
@@ -240,7 +238,7 @@ body {
   }
 
   .hero__descriptor::before {
-    inset: -1.5rem -1.5rem;
+    inset: -1rem -1rem;
     background: radial-gradient(
       ellipse at 30% 50%,
       rgba(255, 255, 255, 0.95) 0%,
@@ -263,7 +261,7 @@ body {
   .hero__nav-link { font-size: 0.62rem; }
 
   .hero__bottom {
-    padding: 0 1rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    padding: 0 1rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
   }
 
   .hero__name {
@@ -289,44 +287,4 @@ body {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(25px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-/* ─── Heartbeat rhythm keyframes ─── */
-
-/*
-  Cardiac cycle at ~38 bpm (1.6s period — deep rest):
-  
-  0%   = start of cycle, resting
-  6%   = S1 peak ("lub") — strong systolic contraction
-  15%  = S1 falloff
-  28%  = S2 peak ("dub") — aortic/pulmonic valve closure
-  38%  = S2 falloff
-  100% = diastolic rest → next cycle
-*/
-@keyframes heartbeatPulse {
-  0%   { opacity: 0.55; filter: invert(1) brightness(1); }
-  6%   { opacity: 0.78; filter: invert(1) brightness(1.35); }
-  15%  { opacity: 0.55; filter: invert(1) brightness(1); }
-  28%  { opacity: 0.68; filter: invert(1) brightness(1.2); }
-  38%  { opacity: 0.55; filter: invert(1) brightness(1); }
-  100% { opacity: 0.55; filter: invert(1) brightness(1); }
-}
-
-@keyframes vignettePulse {
-  0%   { opacity: 0.3; }
-  6%   { opacity: 0.05; }
-  15%  { opacity: 0.3; }
-  28%  { opacity: 0.15; }
-  38%  { opacity: 0.3; }
-  100% { opacity: 0.3; }
-}
-
-/* Mobile heartbeat — higher base opacity so ASCII is actually visible */
-@keyframes heartbeatPulseMobile {
-  0%   { opacity: 0.8;  filter: invert(1) brightness(1.1); }
-  6%   { opacity: 0.95; filter: invert(1) brightness(1.5); }
-  15%  { opacity: 0.8;  filter: invert(1) brightness(1.1); }
-  28%  { opacity: 0.88; filter: invert(1) brightness(1.3); }
-  38%  { opacity: 0.8;  filter: invert(1) brightness(1.1); }
-  100% { opacity: 0.8;  filter: invert(1) brightness(1.1); }
 }

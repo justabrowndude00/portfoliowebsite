@@ -107,7 +107,7 @@ function Hero() {
   return (
     <section className="hero" id="hero">
       {/* Full-screen ASCII video background */}
-      <div className="hero__ascii-bg hero__ascii-bg--heartbeat">
+      <div className="hero__ascii-bg">
         <VideoAscii
           src="/hero.mp4"
           videoMode={false}
