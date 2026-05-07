@@ -194,23 +194,74 @@ body {
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
-  .hero__nav { padding: 1.5rem; }
-  .hero__nav-links { display: none; }
+  .hero {
+    height: 100dvh; /* use dynamic viewport height for mobile browsers */
+  }
+
+  .hero__nav {
+    padding: 1.25rem 1.25rem;
+  }
+
+  .hero__nav-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .hero__nav-link {
+    font-size: 0.68rem;
+  }
 
   .hero__bottom {
     flex-direction: column;
     align-items: flex-start;
-    padding: 0 1.5rem 1.5rem;
+    padding: 0 1.25rem 2rem;
+    gap: 1.25rem;
   }
 
   .hero__name {
-    font-size: clamp(3.5rem, 18vw, 8rem);
+    font-size: clamp(3rem, 16vw, 6rem);
+    line-height: 0.85;
   }
 
   .hero__descriptor {
     text-align: left;
     max-width: 100%;
     padding-bottom: 0;
+  }
+
+  .hero__descriptor::before {
+    inset: -1.5rem -1.5rem;
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.8) 45%,
+      rgba(255, 255, 255, 0) 75%
+    );
+  }
+
+  .hero__descriptor p {
+    font-size: 0.72rem;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 400px) {
+  .hero__nav { padding: 1rem; }
+
+  .hero__nav-links { gap: 0.9rem; }
+
+  .hero__nav-link { font-size: 0.62rem; }
+
+  .hero__bottom {
+    padding: 0 1rem 1.5rem;
+  }
+
+  .hero__name {
+    font-size: clamp(2.5rem, 15vw, 4.5rem);
+  }
+
+  .hero__descriptor p {
+    font-size: 0.68rem;
   }
 }
 

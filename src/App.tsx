@@ -72,6 +72,26 @@ function useHeartbeat() {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   RESPONSIVE HOOK
+   ═══════════════════════════════════════════════════════════ */
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth <= breakpoint
+  )
+
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mql.addEventListener('change', onChange)
+    setIsMobile(mql.matches)
+    return () => mql.removeEventListener('change', onChange)
+  }, [breakpoint])
+
+  return isMobile
+}
+
+/* ═══════════════════════════════════════════════════════════
    HERO — the only component
    ═══════════════════════════════════════════════════════════ */
 
@@ -81,6 +101,7 @@ function Hero() {
   }, [])
 
   const brightness = useHeartbeat()
+  const isMobile = useIsMobile()
 
   return (
     <section className="hero" id="hero">
@@ -89,16 +110,16 @@ function Hero() {
         <VideoAscii
           src="/hero.mp4"
           videoMode={false}
-          numColsRaw={280}
+          numColsRaw={isMobile ? 100 : 280}
           brightnessRaw={brightness}
           saturationRaw={0.0}
           bgOpacityRaw={0.0}
           charMode="luminance"
           mouseEffect={{
             style: 'brighten',
-            radius: 0.15,
+            radius: isMobile ? 0.25 : 0.15,
             duration: 2.0,
-            trailLen: 25,
+            trailLen: isMobile ? 15 : 25,
             trailDecay: 6,
             brightness: 5.0,
           }}
@@ -118,10 +139,10 @@ function Hero() {
       <nav className="hero__nav">
         <div className="hero__logo"> </div>
         <ul className="hero__nav-links">
-          {['Home', 'About', 'Contact', 'Works'].map((label) => (
+          {['Home', 'Vision', 'Contact', 'CV'].map((label) => (
             <li key={label}>
               <button
-                className={`hero__nav-link ${label === 'Works' ? 'hero__nav-link--active' : ''}`}
+                className={`hero__nav-link ${label === 'CV' ? 'hero__nav-link--active' : ''}`}
                 onClick={() => scrollTo(label.toLowerCase())}
               >
                 {label}
