@@ -45,8 +45,9 @@ function heartbeatIntensity(t: number): number {
 }
 
 function useHeartbeat(isMobile = false) {
-  const resting = isMobile ? 2.5 : 1.8
-  const peak = isMobile ? 5.5 : 4.5
+  // Boosted base contrast so neurons are clearly visible
+  const resting = isMobile ? 3.0 : 2.3
+  const peak = isMobile ? 6.0 : 5.0
 
   const [brightness, setBrightness] = useState(resting)
   const rafRef = useRef<number>(0)
@@ -104,10 +105,51 @@ function Hero() {
   const isMobile = useIsMobile()
   const brightness = useHeartbeat(isMobile)
 
+  const asciiContainerRef = useRef<HTMLDivElement>(null)
+
+  // react-video-ascii only listens to mouse events.
+  // We simulate touch events by dispatching mouse events to its canvas.
+  useEffect(() => {
+    const container = asciiContainerRef.current
+    if (!container) return
+
+    const canvas = container.querySelector('canvas')
+    if (!canvas) return
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0]
+        const mouseEvent = new MouseEvent('mousemove', {
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          bubbles: true,
+        })
+        canvas.dispatchEvent(mouseEvent)
+      }
+    }
+
+    const handleTouchEnd = () => {
+      const mouseEvent = new MouseEvent('mouseleave', { bubbles: true })
+      canvas.dispatchEvent(mouseEvent)
+    }
+
+    canvas.addEventListener('touchstart', handleTouchMove, { passive: true })
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true })
+    canvas.addEventListener('touchend', handleTouchEnd)
+    canvas.addEventListener('touchcancel', handleTouchEnd)
+
+    return () => {
+      canvas.removeEventListener('touchstart', handleTouchMove)
+      canvas.removeEventListener('touchmove', handleTouchMove)
+      canvas.removeEventListener('touchend', handleTouchEnd)
+      canvas.removeEventListener('touchcancel', handleTouchEnd)
+    }
+  }, [])
+
   return (
     <section className="hero" id="hero">
       {/* Full-screen ASCII video background */}
-      <div className="hero__ascii-bg">
+      <div className="hero__ascii-bg" ref={asciiContainerRef}>
         <VideoAscii
           src="/hero.mp4"
           videoMode={false}
@@ -118,11 +160,11 @@ function Hero() {
           charMode="luminance"
           mouseEffect={{
             style: 'brighten',
-            radius: isMobile ? 0.25 : 0.15,
+            radius: isMobile ? 0.35 : 0.15,
             duration: 2.0,
             trailLen: isMobile ? 15 : 25,
             trailDecay: 6,
-            brightness: 5.0,
+            brightness: 8.0,
           }}
           clickEffect={{
             style: 'ripple',
