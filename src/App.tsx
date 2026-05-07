@@ -44,8 +44,11 @@ function heartbeatIntensity(t: number): number {
   return Math.max(s1, s2)
 }
 
-function useHeartbeat() {
-  const [brightness, setBrightness] = useState(1.8)
+function useHeartbeat(isMobile = false) {
+  const resting = isMobile ? 2.5 : 1.8
+  const peak = isMobile ? 5.5 : 4.5
+
+  const [brightness, setBrightness] = useState(resting)
   const rafRef = useRef<number>(0)
   const startRef = useRef<number>(0)
 
@@ -57,8 +60,6 @@ function useHeartbeat() {
       const intensity = heartbeatIntensity(elapsed)
 
       // Map intensity (0–1) → brightness range (resting → peak)
-      const resting = 1.8
-      const peak = 4.5
       setBrightness(resting + intensity * (peak - resting))
 
       rafRef.current = requestAnimationFrame(tick)
@@ -66,7 +67,7 @@ function useHeartbeat() {
 
     rafRef.current = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [])
+  }, [resting, peak])
 
   return brightness
 }
@@ -100,8 +101,8 @@ function Hero() {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  const brightness = useHeartbeat()
   const isMobile = useIsMobile()
+  const brightness = useHeartbeat(isMobile)
 
   return (
     <section className="hero" id="hero">
